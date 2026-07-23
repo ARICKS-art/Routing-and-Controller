@@ -1,0 +1,70 @@
+<?php
+
+use App\Http\Controllers\MajorController;
+use App\Http\Controllers\ScoolClass\IndexController;
+use App\Http\Controllers\ScoolClass\ShowController;
+use App\Http\Controllers\ScoolClass\CreateController;
+use App\Http\Controllers\ScoolClass\EditController;
+use App\Http\Controllers\ScoolClass\StoreController;
+use App\Http\Controllers\ScoolClass\UpdateController;
+use App\Http\Controllers\ScoolClass\DestroyController;
+use App\Http\Controllers\StudentController;
+use App\Http\Controllers\TeacherController;
+use Illuminate\Support\Facades\Route;
+
+Route::get('/', function () {
+    return view('welcome');
+});
+
+Route::name('students.')->prefix('students')->group(function () {
+    Route::get(
+        '/',
+        [StudentController::class, 'index']
+    )->name('index');
+
+    Route::get('/{id}', [StudentController::class, 'show'])->name('show');
+
+    Route::get('/create', [StudentController::class, 'create'])->name('create');
+
+    Route::get('/{id}/edit', [StudentController::class, 'edit'])->name('edit');
+
+    Route::post('/', [StudentController::class, 'store'])->name('store');
+
+    Route::put('/{id}', [StudentController::class, "update"])->name('update');
+
+    Route::delete('/{id}', [StudentController::class, "delete"])->name('destroy');
+});
+
+Route::name('teachers.')->prefix('teachers')->group(function () {
+    Route::get('/', [TeacherController::class, 'index']  )->name('index');
+
+    Route::get('/{id}', [TeacherController::class, 'show'])->name('show');
+
+    Route::get('/create', [TeacherController::class, 'create'])->name('create');
+
+    Route::get('/{id}/edit', [TeacherController::class, 'edit'])->name('edit');
+
+    Route::post('/', [TeacherController::class, 'store'])->name('store');
+
+    Route::put('/{id}', [TeacherController::class, "update"])->name('update');
+
+    Route::delete('/{id}', [TeacherController::class, "delete"])->name('destroy');
+});
+
+Route::name('schoolclasses.')->prefix('schoolclasses')->group(function () {
+    Route::get('/', IndexController::class)->name('index');
+
+    Route::get('/{id}', ShowController::class)->name('show');
+
+    Route::get('/create', CreateController::class)->name('create');
+
+    Route::get('/{id}/edit', EditController::class)->name('edit');
+
+    Route::post('/', StoreController::class)->name('store');
+
+    Route::put('/{id}', UpdateController::class)->name('update');
+
+    Route::delete('/{id}', DestroyController::class)->name('destroy');
+});
+
+Route::resource('major', MajorController::class);
