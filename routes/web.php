@@ -1,13 +1,13 @@
 <?php
 
 use App\Http\Controllers\MajorController;
-use App\Http\Controllers\ScoolClass\IndexController;
-use App\Http\Controllers\ScoolClass\ShowController;
-use App\Http\Controllers\ScoolClass\CreateController;
-use App\Http\Controllers\ScoolClass\EditController;
-use App\Http\Controllers\ScoolClass\StoreController;
-use App\Http\Controllers\ScoolClass\UpdateController;
-use App\Http\Controllers\ScoolClass\DestroyController;
+use App\Http\Controllers\SchoolClass\IndexController;
+use App\Http\Controllers\SchoolClass\ShowController;
+use App\Http\Controllers\SchoolClass\CreateController;
+use App\Http\Controllers\SchoolClass\EditController;
+use App\Http\Controllers\SchoolClass\StoreController;
+use App\Http\Controllers\SchoolClass\UpdateController;
+use App\Http\Controllers\SchoolClass\DestroyController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\TeacherController;
 use Illuminate\Support\Facades\Route;
@@ -67,4 +67,4 @@ Route::name('schoolclasses.')->prefix('schoolclasses')->group(function () {
     Route::delete('/{id}', DestroyController::class)->name('destroy');
 });
 
-Route::resource('major', MajorController::class);
+Route::resource('majors', MajorController::class);
