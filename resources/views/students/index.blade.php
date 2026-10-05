@@ -3,9 +3,7 @@
        @section('title', $title)
             
        @section('content')
-<x-alert type="">
-            Terjadi kesalahan saat memproses data. Silakan coba lagi.
-        </x-alert>
+
 
 
              <div class="mb-8 flex items-end justify-between border-b border-[#E5E3DB] pb-5">
@@ -37,20 +35,21 @@
                             {{ $loop->iteration }}
                         </td> 
                         <td class="px-5 py-4 font-mono text-xs text-slate-500">
-                            {{ $student['nis'] }}</td>
+                            {{ $student->nis }}</td>
                         <td class="px-5 py-4 font-medium text-[#16213A]">
-                            {{ $student['name'] }}</td>
+                            {{ $student->name }}</td>
                         <td class="px-5 py-4">
-                            {{ $student['class'] }}</td>
+                            {{ $student->class }}</td>
                         <td class="px-5 py-4">
-                            {{ $student['major'] }}</td>
+                            {{ $student->major }}</td>
                         <td class="px-5 py-4">
                             <div class="flex justify-end gap-4 text-xs font-medium">
-                                <a href="{{ route('students.show', $student['id']) }}" class="text-[#16213A] hover:text-[#A16207]">Lihat</a>
-                                <a href="{{ route('students.edit', $student['id']) }}" class="text-[#16213A] hover:text-[#A16207]">Ubah</a>
-                                <form action="{{ route('students.destroy', $student['id']) }}" method="POST"
+                                <a href="{{ route('students.show', $student->id) }}" class="text-[#16213A] hover:text-[#A16207]">Lihat</a>
+                                <a href="{{ route('students.edit', $student->id) }}" class="text-[#16213A] hover:text-[#A16207]">Ubah</a>
+                                <form action="{{ route('students.destroy', $student->id) }}" method="POST"
                                     onsubmit="return confirm('Hapus data siswa ini dari buku induk?')">
-
+                                    @csrf
+                                    @method('DELETE')
                                     <button type="submit" class="text-red-700 hover:text-red-900">Hapus</button>
                                 </form>
                             </div>

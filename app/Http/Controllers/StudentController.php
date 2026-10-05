@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\Student\StoreRequest;
+use App\Http\Requests\Student\UpdateRequest;
+use App\Models\Student;
 use Illuminate\Http\Request;
 
 class StudentController extends Controller
@@ -9,40 +12,23 @@ class StudentController extends Controller
    public function index()
    {
       $title = "Sistem Sekolah - Data Siswa";
-      $students = [
-         [
-            "id" => 1,
-            "nis" => "1002",
-            "name" => "ANDI",
-            "class" => "XII TKJ 1",
-            "major" => "TKJ"
-         ],
-         [
-            "id" => 2,
-            "nis" => "1002",
-            "name" => "BUDI ARIYANTO",
-            "class" => "XII AKL 1",
-            "major" => "AKL"
-         ],
-         [
-            "id" => 3,
-            "nis" => "1002",
-            "name" => "SANDIAGA UNO",
-            "class" => "XII BID",
-            "major" => "BID"
-         ],
+      $students = Student::select('id', 'nis', 'name', 'class', 'major')
+      ->get();
+  
          
-      ];
       return view('students.index', [
          "title" => $title,
          "students" => $students
       ]);
    }
-   public function show(string $id)
+   public function show(student $student)
    {
       $title = "Sistem Sekolah - Detail Siswa";
+
+     
       return view('students.show', [
-         "title" => $title
+         'title' => $title,
+         'student' => $student
       ]);
    }
    public function create()
@@ -53,27 +39,42 @@ class StudentController extends Controller
       ]);
    }
 
-   public function edit()
+   public function edit(Student $student)
    {
       $title = "Sistem Sekolah - Ubah Siswa";
       return view('students.edit', [
-         "title" => $title
+         "title" => $title,
+         "student" => $student
       ]);
    }
 
-   public function store()
+   public function store(StoreRequest $request)
    {
-      return "Melakukan penambahan data siswa";
-   } 
+      //validasi
+      $validatedRequest = $request->validated();
 
-   public function update()
-   {
-      return "Melakukan perubahan data siswa";
+      Student::create($validatedRequest);
+
+      return redirect()->route('students.index'); 
    }
 
-   public function Destroy()
+   public function update(Student $student, UpdateRequest $request)
    {
-      return "Menghapus data siswa";
+      //validasi
+      $validatedRequest = $request->validate([
+        
+      ]);
+      $student->update($validatedRequest);
+
+      return redirect()->route('students.index');
+     
+   }
+
+   public function destroy (Student $student)
+   {
+      $student->delete();
+
+      return redirect()->route('students.index')   ;
    }
 }
 
