@@ -18,10 +18,11 @@ Route::get('/', function () {
 });
 
 
-route::get('/login', [AuthController::class, 'loginView'])->name('loginView');
-route::post('/login', [AuthController::class, 'loginPost'])->name('loginPost');
-route::get('/register', [AuthController::class, 'registerView'])->name('registerView');
-route::post('/register', [AuthController::class, 'registerPost'])->name('registerPost');
+route::get('/login', [AuthController::class, 'loginView'])->name('login-view');
+route::post('/login', [AuthController::class, 'loginPost'])->name('login-post');
+route::get('/register', [AuthController::class, 'registerView'])->name('register-view');
+route::post('/register', [AuthController::class, 'registerPost'])->name('register-post');
+route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 Route::name('students.')->prefix('students')->group(function () {
     Route::get(

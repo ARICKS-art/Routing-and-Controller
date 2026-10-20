@@ -2,28 +2,66 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use PHPUnit\Framework\MockObject\Stub\ReturnStub;
 
 class AuthController extends Controller
 {
-    public function loginView()
+    public function LoginView()
     {
         return view('auth.login');
     }
 
-    public function loginPost(Request $request)
+    public function LoginPost(Request $request)
     {
-        // Login logic here
+        $credentials = $request->validate([
+            'email' => ['required', 'email'],
+            'password' => ['required'],
+        ]);
+
+        if(Auth::attempt($credentials)) {
+            $request->session()->regenerate();
+            return redirect()->route('students.index');
+        }
+
+        return back()->withErrors([
+            'email' => 'Email or Password is incorrect.',
+        ]);
     }
 
-    public function registerView()
+    public function RegisterView()
     {
         return view('auth.register');
     }
 
-    public function registerPost(Request $request)
+    public function RegisterPost(Request $request)
     {
-        // Registration logic here
+     
+        $validatedRequest = $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
+            'password' => ['required', 'string', 'min:8', 'confirmed']
+        ]);
+
+        
+        User::create([
+            'name' => $validatedRequest['name'],
+            'email' => $validatedRequest['email'],
+            'password' => bcrypt($validatedRequest['password']),
+            'role' => 'student'
+        ]);
+
+            
+        return redirect()->route('login-view');
     }
 
+    public function Logout(Request $request)
+    {
+        Auth::logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+        return redirect()->route('login-view');
+    }
 }
