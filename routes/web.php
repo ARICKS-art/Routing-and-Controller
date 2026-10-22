@@ -1,77 +1,93 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\TeacherController;
+use App\Http\Controllers\StudentController;
 use App\Http\Controllers\MajorController;
+
 use App\Http\Controllers\SchoolClass\IndexController;
-use App\Http\Controllers\SchoolClass\ShowController;
 use App\Http\Controllers\SchoolClass\CreateController;
-use App\Http\Controllers\SchoolClass\EditController;
 use App\Http\Controllers\SchoolClass\StoreController;
+use App\Http\Controllers\SchoolClass\ShowController;
+use App\Http\Controllers\SchoolClass\EditController;
 use App\Http\Controllers\SchoolClass\UpdateController;
 use App\Http\Controllers\SchoolClass\DestroyController;
-use App\Http\Controllers\StudentController;
-use App\Http\Controllers\TeacherController;
-use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('welcome');
 });
 
+// Authentication
+Route::get('/login', [AuthController::class, 'LoginView'])->name('login-view')->middleware('guest');
+Route::post('/login', [AuthController::class, 'LoginPost'])->name('login-post')->middleware('guest');
+Route::get('/register', [AuthController::class, 'RegisterView'])->name('register-view')->middleware('guest');
+Route::post('/register', [AuthController::class, 'RegisterPost'])->name('register-post')->middleware('guest');
+Route::post('/logout', [AuthController::class, 'Logout'])->name('logout')->middleware('auth');
 
-route::get('/login', [AuthController::class, 'loginView'])->name('login-view');
-route::post('/login', [AuthController::class, 'loginPost'])->name('login-post');
-route::get('/register', [AuthController::class, 'registerView'])->name('register-view');
-route::post('/register', [AuthController::class, 'registerPost'])->name('register-post');
-route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+// Management Data Student (Action Controller)
+Route::name('students.')->middleware(['role:student,teacher', 'auth'])->prefix('students')->controller(StudentController::class)->group(function () {
 
-Route::name('students.')->prefix('students')->group(function () {
-    Route::get(
-        '/',
-        [StudentController::class, 'index'])->name('index');
+    Route::get('/', 'index')->name('index');
 
-    Route::get('/create', [StudentController::class, 'create'])->name('create');
+    Route::get('/create', 'create')->name('create');
 
-    Route::get('/{student}', [StudentController::class, 'show'])->name('show')->whereNumber('id');
+    Route::get('/{student}', 'show')->name('show')->whereNumber('student');
 
-    Route::get('/{student}/edit', [StudentController::class, 'edit'])->name('edit')->whereNumber('id');
+    Route::get('/{student}/edit', 'edit')->name('edit')->whereNumber('student');
 
-    Route::post('/', [StudentController::class, 'store'])->name('store');
+    Route::post('/', 'store')->name('store');
 
-    Route::put('/{student}', [StudentController::class, "update"])->name('update');
+    Route::put('/{student}', 'update')->name('update')->whereNumber('student');
 
-    Route::delete('/{student}', [StudentController::class, "destroy"])->name('destroy');
+    Route::delete('/{student}', 'destroy')->name('destroy')->whereNumber('student');
+
 });
 
-Route::name('teachers.')->prefix('teachers')->group(function () {
-    Route::get('/', [TeacherController::class, 'index']  )->name('index');
+// Management Data Teacher (Action Controller)
+Route::name('teachers.')->middleware(['role:teacher', 'auth'])->prefix('teachers')->controller(TeacherController::class)->group(function () {
 
-    Route::get('/create', [TeacherController::class, 'create'])->name('create');
+    Route::get('/', 'index')->name('index');
 
-    Route::get('/{id}', [TeacherController::class, 'show'])->name('show');
+    Route::get('/create', 'create')->name('create');
 
-    Route::get('/{id}/edit', [TeacherController::class, 'edit'])->name('edit');
+    Route::get('/{id}', 'show')->name('show')->whereNumber('id');
 
-    Route::post('/', [TeacherController::class, 'store'])->name('store');
+    Route::get('/{id}/edit', 'edit')->name('edit')->whereNumber('id');
 
-    Route::put('/{id}', [TeacherController::class, "update"])->name('update');
+    Route::post('/', 'store')->name('store');
 
-    Route::delete('/{id}', [TeacherController::class, "delete"])->name('destroy');
+    Route::put('/{id}', 'update')->name('update')->whereNumber('id');
+
+    Route::delete('/{id}', 'destroy')->name('destroy')->whereNumber('id');
+
 });
 
-Route::name('classes.')->prefix('classes')->group(function () {
+// Management SchoolClass (Invokable)
+
+Route::name('classes.')->middleware(['role:teacher', 'auth'])->prefix('classes')->group(function () {
+    // Halaman Daftar Class
     Route::get('/', IndexController::class)->name('index');
 
+    // Halaman Tambah Class
     Route::get('/create', CreateController::class)->name('create');
 
-    Route::get('/{id}', ShowController::class)->name('show');
+    // Halaman Detail Class
+    Route::get('/{id}', ShowController::class)->name('show')->whereNumber('id');
 
-    Route::get('/{id}/edit', EditController::class)->name('edit');
+    // Halaman Edit Class
+    Route::get('/{id}/edit', EditController::class)->name('edit')->whereNumber('id');
 
+    // Logika Tambah Class
     Route::post('/', StoreController::class)->name('store');
 
-    Route::put('/{id}', UpdateController::class)->name('update');
+    // Logika Edit Class
+    Route::put('/{id}', UpdateController::class)->name('update')->whereNumber('id');
 
-    Route::delete('/{id}', DestroyController::class)->name('destroy');
+    // Logika Hapus Class
+    Route::delete('/{id}', DestroyController::class)->name('destroy')->whereNumber('id');
 });
 
-Route::resource('majors', MajorController::class);
+// Management Major (Resource Controller)
+
+Route::resource('majors', MajorController::class)->middleware(['role:teacher', 'auth']);
